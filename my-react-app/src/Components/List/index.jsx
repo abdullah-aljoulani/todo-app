@@ -1,55 +1,39 @@
-import React, { useContext } from 'react';
+import { useContext, useState } from 'react';
+import { SettingsContext } from '../../Context/Settings';
 import { Pagination } from '@mantine/core';
-import { settingsContext } from "../../Context/Settings";
-
-export default function List({ list, toggleComplete }) {
-const {itemsPerPage,currentPage,setCurrentPage} = useContext(settingsContext);
 
 
-  const startIndex = (currentPage - 1) * itemsPerPage; 
-  const endIndex = startIndex + itemsPerPage; 
+function List ({ list, toggleComplete }) {
+    const {
+        displayCount,
+        showComplete,
+        sort
+    } = useContext(SettingsContext);
+    const [activePage, setPage] = useState(1);
 
+    const renderableList = showComplete ? list : list.filter(item => !item.complete);
 
-  const itemsToDisplay = list.slice(startIndex, endIndex);
+    const pageCount = Math.ceil(renderableList.length / displayCount);
 
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
+    const listStart = displayCount * (activePage - 1);
+    const listEnd = listStart + displayCount;
 
-  return (
-    <div>
-      {itemsToDisplay.map((item) => (
-        <div key={item.id}>
-          <p>{item.text}</p>
-          <p>
-            <small>Assigned to: {item.assignee}</small>
-          </p>
-          <p>
-            <small>Difficulty: {item.difficulty}</small>
-          </p>
-          <div onClick={() => toggleComplete(item.id)}>
-            Complete: {item.complete.toString()}
-          </div>
-          <hr />
-        </div>
-      ))}
+    const displayList = renderableList.slice(listStart, listEnd);
 
-      {list.length > itemsPerPage && (
-        <Pagination
-          total={Math.ceil(list.length / itemsPerPage)} 
-          value={currentPage}
-          onChange={handlePageChange}
-          position="center"
-          styles={(theme) => ({
-            control: {
-              '&[data-active]': {
-                backgroundImage: theme.fn.gradient({ from: 'red', to: 'yellow' }),
-                border: 0,
-              },
-            },
-          })}
-        />
-      )}
-    </div>
-  );
+    return (
+        <>
+        {displayList.map(item => (
+            <div key={item.id}>
+            <p>{item.text}</p>
+            <p><small>Assigned to: {item.assignee}</small></p>
+            <p><small>Difficulty: {item.difficulty}</small></p>
+            <div onClick={() => toggleComplete(item.id)}>Complete: {item.complete.toString()}</div>	
+            <hr />
+            </div> 
+        ))}
+        <Pagination value={activePage} onChange={setPage} total={pageCount} />
+        </>
+    )
 }
+
+export default List;

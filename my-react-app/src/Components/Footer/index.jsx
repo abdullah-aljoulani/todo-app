@@ -1,7 +1,23 @@
-import React from 'react';
+import { createStyles } from '@mantine/core';
 
-const Footer = () => {
-  return <footer>Abdullah Aljoulani 2023</footer>;
-};
+
+const useStyles = createStyles((theme) => ({
+  footer: {
+    textAlign: 'right',
+    width: '80%',
+    margin: 'auto',
+  }
+}));
+
+
+function Footer() {
+  const { classes } = useStyles();
+
+  return (
+    <footer className={classes.footer}>
+      &copy;Abdullah Aljoulani 
+    </footer>
+  )
+}
 
 export default Footer;
