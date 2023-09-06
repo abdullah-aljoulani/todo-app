@@ -1,17 +1,19 @@
 
 import React from "react";
-import { MantineProvider } from '@mantine/core';
 import Todo from "./Components/Todo";
-import SettingsProvider from "./Context/Settings/index";
+import Header from './Components/Header';
+import Footer from './Components/Footer';
+import SettingsForm from './Components/SettingForm/index';
 
 export default class App extends React.Component {
   render() {
     return (
-      <MantineProvider withGlobalStyles withNormalizeCSS>
-      <SettingsProvider>
+      <>
+        <Header />
         <Todo />
-      </SettingsProvider>
-      </MantineProvider> 
+        <SettingsForm />
+        <Footer />
+      </>
     );
   }
 }

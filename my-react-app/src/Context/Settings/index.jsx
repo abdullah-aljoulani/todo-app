@@ -1,31 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 
-export const settingsContext = React.createContext();
-
-export default function SettingsProvider(props) {
-  const [values, setValues] = useState({});
-  const [list, setList] = useState([]);
-  const [incomplete, setIncomplete] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+export const SettingsContext = React.createContext();
 
 
-  let initState = {
-    itemsPerPage: 3,
-    hideCompleted: true,
-    sort: "difficulty",
-    values,
-    setValues,
-    list,
-    setList,
-    incomplete,
-    setIncomplete,
-    currentPage,
-    setCurrentPage
-  };
-
-  return (
-    <settingsContext.Provider value={initState}>
-      {props.children}
-    </settingsContext.Provider>
-  );
+function SettingsProvider({ children }) {
+  const [displayCount, setDisplayCount] = useState(3);
+  const [showComplete, setShowComplete] = useState(false);
+  const [sort, setSort] = useState('difficulty');
+  const saveLocally = () => {
+    localStorage.setItem(
+        'todo',
+        JSON.stringify({displayCount, showComplete, sort})
+    );
 }
+
+useEffect(() => {
+    let storage = JSON.parse(localStorage.getItem('todo'));
+    if(storage){
+        setDisplayCount(storage.displayCount);
+        setSort(storage.sort);
+        setShowComplete(storage.showComplete);
+    }
+}, []);
+
+const values = {
+  displayCount,
+  showComplete,
+  sort,
+  setDisplayCount,
+  setShowComplete,
+  setSort,
+  saveLocally,
+}
+
+return(
+    <SettingsContext.Provider value={values}>
+      {children}
+    </SettingsContext.Provider>
+  )	
+}	
+export default SettingsProvider;
