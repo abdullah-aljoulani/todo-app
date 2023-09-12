@@ -1,10 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import useForm from '../../hooks/form';
+import { Card, createStyles, Grid } from '@mantine/core';
 
 import { v4 as uuid } from 'uuid';
 import List from '../List';
+import Auth from '../Auth';
+
+const useStyles = createStyles((theme) => ({
+  h1: {
+    backgroundColor: theme.colors.gray[8],
+    color: theme.colors.gray[0],
+    width: '80%',
+    margin: 'auto',
+    fontSize: theme.fontSizes.lg,
+    padding: theme.spacing.md,
+    marginTop: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+  }
+}));
 
 const Todo = () => {
+
+  const { classes } = useStyles()
 
   const [defaultValues] = useState({
     difficulty: 4,
@@ -45,38 +62,51 @@ const Todo = () => {
     // linter will want 'incomplete' added to dependency array unnecessarily. 
     // disable code used to avoid linter warning 
     // eslint-disable-next-line react-hooks/exhaustive-deps 
-  }, [list]);  
+  }, [list]);
+
+  useEffect(() => {
+  }, []);
 
   return (
     <>
-        <h1 data-testid="todo-h1">To Do List: {incomplete} items pending</h1>
+      <h1 className={classes.h1} data-testid="todo-h1">To Do List: {incomplete} items pending</h1>
 
-      <form onSubmit={handleSubmit}>
-
+      <Grid style={{ width: '80%', margin: 'auto' }}>
+      <Grid.Col xs={12} sm={4}>
+    <Auth capability="create">
+    <Card withBorder>
+        <form onSubmit={handleSubmit}>
         <h2>Add To Do Item</h2>
-
         <label>
           <span>To Do Item</span>
-          <input onChange={handleChange} name="text" type="text" placeholder="Item Details" />
+            <input onChange={handleChange} name="text" type="text" placeholder="Item Details" />
         </label>
-
-        <label>
+        < label >
           <span>Assigned To</span>
-          <input onChange={handleChange} name="assignee" type="text" placeholder="Assignee Name" />
-        </label>
+            <input onChange={handleChange} name="assignee" type="text" placeholder="Assignee Name" />
+            </label >
 
-        <label>
-          <span>Difficulty</span>
-          <input onChange={handleChange} defaultValue={defaultValues.difficulty} type="range" min={1} max={5} name="difficulty" />
-        </label>
+          <label>
+              <span>Difficulty</span>
+            <input onChange={handleChange} defaultValue={defaultValues.difficulty} type="range" min={1} max={5} name="difficulty" />
+          </label>
 
         <label>
           <button type="submit">Add Item</button>
-        </label>
-      </form>
+          </label >
+        </form >
 
-      <List toggleComplete={toggleComplete} list={list} />
-
+      </Card>
+    </Auth>
+  </Grid.Col>
+  <Grid.Col xs={12} sm={8}>
+    <List
+    toggleComplete={toggleComplete}
+    deleteItem={deleteItem}
+    list={list}
+    />
+  </Grid.Col>
+</Grid>
     </>
   );
 };
